@@ -4,6 +4,7 @@ const { authenticate, authorize } = require('../middleware/auth');
 const channelController = require('../controllers/channelController');
 
 router.get('/', authenticate, channelController.getChannels);
+router.get('/discover', authenticate, channelController.discoverChannels);
 router.post('/', authenticate, channelController.createChannel);
 router.post('/direct', authenticate, channelController.getOrCreateDirectChannel);
 router.get('/:id', authenticate, channelController.getChannel);

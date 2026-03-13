@@ -50,6 +50,7 @@ export const usersAPI = {
 // CHANNELS
 export const channelsAPI = {
   getAll: () => api.get('/api/channels'),
+  discover: () => api.get('/api/channels/discover'),
   create: (data) => api.post('/api/channels', data),
   getById: (id) => api.get(`/api/channels/${id}`),
   update: (id, data) => api.put(`/api/channels/${id}`, data),

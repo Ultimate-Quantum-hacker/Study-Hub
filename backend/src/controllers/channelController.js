@@ -15,6 +15,18 @@ exports.getChannels = async (req, res) => {
   res.json({ success: true, channels });
 };
 
+// GET /api/channels/discover — all group channels (for browsing/joining)
+exports.discoverChannels = async (req, res) => {
+  const channels = await Channel.find({
+    type: 'group',
+    isArchived: false,
+  })
+    .populate('members', 'username avatar isOnline')
+    .populate('createdBy', 'username')
+    .sort({ createdAt: -1 });
+  res.json({ success: true, channels });
+};
+
 // POST /api/channels — create new channel
 exports.createChannel = async (req, res) => {
   const { name, description, type, members } = req.body;

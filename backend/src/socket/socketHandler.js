@@ -38,7 +38,7 @@ const socketHandler = (io) => {
       try {
         const { channelId, content, type = 'text', replyTo, fileUrl, fileName, fileMimeType, fileSize } = data;
         const channel = await Channel.findById(channelId);
-        if (!channel || !channel.members.includes(socket.user._id)) return;
+        if (!channel || !channel.members.some((m) => m.equals(socket.user._id))) return;
 
         const message = await Message.create({
           channel: channelId,
