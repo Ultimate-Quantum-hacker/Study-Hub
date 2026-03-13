@@ -75,6 +75,32 @@
 
 html { scroll-behavior: smooth; }
 
+/* =========================================
+   MOUSE TRAIL ANIMATION (AMBIENT GLOW)
+   ========================================= */
+:root {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+}
+
+.mouse-glow-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.mouse-glow-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    600px circle at var(--mouse-x) var(--mouse-y),
+    rgba(168, 85, 247, 0.08),
+    transparent 80%
+  );
+  z-index: 0;
+}
+
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg-primary);

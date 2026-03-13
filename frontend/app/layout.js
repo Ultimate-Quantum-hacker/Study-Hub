@@ -1,4 +1,6 @@
 import './globals.css';
+import MouseGlow from '../components/MouseGlow';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
   title: 'Study Hub – Collaborate & Study Smarter',
@@ -12,8 +14,10 @@ export default function RootLayout({ children }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.svg" />
       </head>
-      <body suppressHydrationWarning>
+      <body suppressHydrationWarning className="mouse-glow-wrapper">
+        <MouseGlow />
         {children}
+        <Toaster position="top-right" />
       </body>
     </html>
   );
