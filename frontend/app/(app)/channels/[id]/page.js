@@ -27,6 +27,7 @@ export default function ChannelPage() {
   const [replyTo, setReplyTo] = useState(null);
   const [showMembers, setShowMembers] = useState(false);
   const [hoveredMsg, setHoveredMsg] = useState(null);
+  const [reactionPickerMsgId, setReactionPickerMsgId] = useState(null);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const typingTimeout = useRef(null);
@@ -248,6 +249,16 @@ export default function ChannelPage() {
                         {r.emoji} <span style={{ fontSize: 11 }}>{r.users?.length}</span>
                       </button>
                     ))}
+                    <button className="reaction-pill" style={{ opacity: 0.6 }}
+                      onClick={() => setReactionPickerMsgId(reactionPickerMsgId === msg._id ? null : msg._id)}
+                      title="Add reaction">
+                      ＋
+                    </button>
+                  </div>
+                )}
+                {reactionPickerMsgId === msg._id && (
+                  <div style={{ position: 'absolute', bottom: '100%', left: 48, zIndex: 200 }}>
+                    <EmojiPicker onEmojiClick={(e) => { handleReaction(msg._id, e.emoji); setReactionPickerMsgId(null); }} theme="dark" height={350} width={300} />
                   </div>
                 )}
               </div>
@@ -256,11 +267,18 @@ export default function ChannelPage() {
               {hoveredMsg === msg._id && (
                 <div style={{ display: 'flex', gap: 4, position: 'absolute', right: 12, background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 8, padding: '3px 6px' }}>
                   {REACTIONS.slice(0, 5).map((emoji) => (
-                    <button key={emoji} style={{ fontSize: 14, background: 'none', border: 'none', cursor: 'pointer', padding: '0 2px' }}
+                    <button key={emoji} style={{ fontSize: 14, background: 'none', border: 'none', cursor: 'pointer', padding: '0 2px', transition: 'transform 0.15s' }}
+                      onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.3)'}
+                      onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                       onClick={() => handleReaction(msg._id, emoji)}>
                       {emoji}
                     </button>
                   ))}
+                  <button style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '0 4px' }}
+                    onClick={() => setReactionPickerMsgId(reactionPickerMsgId === msg._id ? null : msg._id)}
+                    title="More reactions">
+                    ＋
+                  </button>
                   <button style={{ fontSize: 12, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer', padding: '0 4px' }}
                     onClick={() => setReplyTo(msg)}>
                     <Reply size={13} />

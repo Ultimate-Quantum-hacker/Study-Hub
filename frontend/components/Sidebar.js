@@ -46,6 +46,7 @@ export default function Sidebar() {
     { href: '/ai', icon: <Bot size={17} />, label: 'AI Assistant' },
     { href: '/calls', icon: <Phone size={17} />, label: 'Calls' },
     { href: '/profile', icon: <User size={17} />, label: 'Profile' },
+    { href: '/settings', icon: <Settings size={17} />, label: 'Settings' },
   ];
 
   if (user?.role === 'admin') {
