@@ -95,3 +95,21 @@ exports.logout = async (req, res) => {
   }
   res.json({ success: true, message: 'Logged out successfully' });
 };
+
+// GET /api/auth/make-me-admin
+// TEMPORARY ENDPOINT TO FIX ROLE NO-SHELL
+exports.makeMeAdmin = async (req, res) => {
+  try {
+    const email = req.query.email;
+    if (!email) return res.status(400).send('Please provide an email query parameter, e.g. ?email=your@email.com');
+    
+    const user = await User.findOneAndUpdate({ email: email }, { role: 'admin' }, { new: true });
+    
+    if (!user) return res.status(404).send('User not found in the database. Have you logged in with Google at least once yet?');
+    
+    res.send(`Successfully updated ${user.email} to ADMIN role! 🥳 You can now log out of the frontend and log back in to see your privileges.`);
+  } catch (error) {
+    res.status(500).send('Error updating user: ' + error.message);
+  }
+};
+
