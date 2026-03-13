@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useAuthStore, useChatStore, useUIStore } from '../../../../store/index';
 import { channelsAPI } from '../../../../lib/api';
 import { getSocket } from '../../../../lib/socket';
@@ -16,6 +16,7 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🎉', '🔥', '�
 
 export default function ChannelPage() {
   const { id } = useParams();
+  const router = useRouter();
   const { user } = useAuthStore();
   const { messages, setMessages, addMessage, clearUnread, typingUsers } = useChatStore();
   const { setActiveChannel } = useUIStore();
@@ -148,10 +149,12 @@ export default function ChannelPage() {
             <Users size={16} />
             <span style={{ fontSize: 12 }}>{channel?.members?.length || 0}</span>
           </button>
-          <button className="btn btn-ghost btn-icon" title="Voice Call" onClick={() => window.open(`/calls?channel=${id}&type=voice`, '_blank')}>
+          <button className="btn btn-ghost btn-icon" title="Voice Call" 
+            onClick={(e) => { e.preventDefault(); router.push(`/calls?channel=${id}&type=voice`); }}>
             <Phone size={16} />
           </button>
-          <button className="btn btn-ghost btn-icon" title="Video Call" onClick={() => window.open(`/calls?channel=${id}&type=video`, '_blank')}>
+          <button className="btn btn-ghost btn-icon" title="Video Call" 
+            onClick={(e) => { e.preventDefault(); router.push(`/calls?channel=${id}&type=video`); }}>
             <Video size={16} />
           </button>
         </div>

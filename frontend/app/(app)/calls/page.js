@@ -5,6 +5,7 @@ import { useAuthStore } from '../../../store/index';
 import { getSocket } from '../../../lib/socket';
 import { Phone, Video, Mic, MicOff, VideoIcon, VideoOff, PhoneOff, Monitor } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { channelsAPI } from '../../../lib/api';
 
 export default function CallsPage() {
   const searchParams = useSearchParams();
@@ -43,6 +44,18 @@ export default function CallsPage() {
   };
 
   useEffect(() => {
+    // Auto-start call if channelId is provided
+    if (channelId && user) {
+      channelsAPI.getById(channelId).then((res) => {
+        const ch = res.data.channel;
+        const otherMember = ch.members?.find((m) => (m._id || m) !== user._id);
+        const toId = otherMember?._id || otherMember;
+        if (toId) {
+          startCall(toId);
+        }
+      });
+    }
+
     const socket = getSocket();
     if (!socket) return;
 
