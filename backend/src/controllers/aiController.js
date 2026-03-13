@@ -1,8 +1,17 @@
 const OpenAI = require('openai');
 const CourseFile = require('../models/CourseFile');
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Initialize with a placeholder if no key is set — prevents server crash at startup
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || 'sk-placeholder' });
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4o';
+
+function requireApiKey(req, res) {
+  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-temporary-fake-key') {
+    res.status(503).json({ success: false, message: 'AI service is not configured. Please set a valid OPENAI_API_KEY.' });
+    return false;
+  }
+  return true;
+}
 
 // Helper: get context from file
 async function getFileContext(fileId) {
@@ -19,6 +28,7 @@ async function getFileContext(fileId) {
 // POST /api/ai/chat — general AI chat
 exports.chat = async (req, res) => {
   try {
+    if (!requireApiKey(req, res)) return;
     const { message, fileId, conversationHistory = [] } = req.body;
     let systemPrompt = `You are StudyBot, an intelligent AI assistant for Study Hub, a collaborative study platform for students. 
 You help students understand course materials, explain concepts, and answer questions about their studies.
@@ -58,6 +68,7 @@ If information is not in the document, say so clearly.`;
 // POST /api/ai/summarize — summarize a document
 exports.summarize = async (req, res) => {
   try {
+    if (!requireApiKey(req, res)) return;
     const { fileId } = req.body;
     const ctx = await getFileContext(fileId);
     if (!ctx) return res.status(404).json({ success: false, message: 'File not found' });
@@ -83,6 +94,7 @@ exports.summarize = async (req, res) => {
 // POST /api/ai/quiz — generate quiz questions
 exports.generateQuiz = async (req, res) => {
   try {
+    if (!requireApiKey(req, res)) return;
     const { fileId, numQuestions = 5 } = req.body;
     const ctx = await getFileContext(fileId);
     if (!ctx) return res.status(404).json({ success: false, message: 'File not found' });
@@ -108,6 +120,7 @@ exports.generateQuiz = async (req, res) => {
 // POST /api/ai/key-points — extract key concepts
 exports.keyPoints = async (req, res) => {
   try {
+    if (!requireApiKey(req, res)) return;
     const { fileId } = req.body;
     const ctx = await getFileContext(fileId);
     if (!ctx) return res.status(404).json({ success: false, message: 'File not found' });
@@ -133,6 +146,7 @@ exports.keyPoints = async (req, res) => {
 // POST /api/ai/search — semantic search across modules
 exports.semanticSearch = async (req, res) => {
   try {
+    if (!requireApiKey(req, res)) return;
     const { query, courseFilter } = req.body;
     const dbQuery = { isProcessed: true, extractedText: { $ne: '' } };
     if (courseFilter) dbQuery.course = new RegExp(courseFilter, 'i');
