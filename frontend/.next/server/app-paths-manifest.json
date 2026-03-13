@@ -1,0 +1,8 @@
+{
+  "/(app)/channels/page": "app/(app)/channels/page.js",
+  "/(app)/modules/page": "app/(app)/modules/page.js",
+  "/(app)/ai/page": "app/(app)/ai/page.js",
+  "/(app)/calls/page": "app/(app)/calls/page.js",
+  "/(app)/admin/page": "app/(app)/admin/page.js",
+  "/(app)/channels/[id]/page": "app/(app)/channels/[id]/page.js"
+}
