@@ -2,6 +2,7 @@ const OpenAI = require('openai');
 const CourseFile = require('../models/CourseFile');
 
 // Initialize with a placeholder if no key is set — prevents server crash at startup
+console.log('AI Controller: OPENAI_API_KEY is', process.env.OPENAI_API_KEY ? 'Set' : 'MISSING');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || 'sk-placeholder' });
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4o';
 
@@ -60,8 +61,8 @@ If information is not in the document, say so clearly.`;
     const reply = completion.choices[0].message.content;
     res.json({ success: true, reply });
   } catch (err) {
-    console.error('AI Chat Error:', err.message);
-    res.status(500).json({ success: false, message: 'AI service error. Please check your OpenAI API key.' });
+    console.error('AI Chat Error:', err);
+    res.status(500).json({ success: false, message: `AI service error: ${err.message}` });
   }
 };
 
@@ -86,8 +87,8 @@ exports.summarize = async (req, res) => {
     await CourseFile.findByIdAndUpdate(fileId, { summary });
     res.json({ success: true, summary, fileName: ctx.name });
   } catch (err) {
-    console.error('AI Summarize Error:', err.message);
-    res.status(500).json({ success: false, message: 'AI service error. Please check your OpenAI API key.' });
+    console.error('AI Summarize Error:', err);
+    res.status(500).json({ success: false, message: `AI service error: ${err.message}` });
   }
 };
 
@@ -112,8 +113,8 @@ exports.generateQuiz = async (req, res) => {
     const result = JSON.parse(completion.choices[0].message.content);
     res.json({ success: true, ...result, fileName: ctx.name });
   } catch (err) {
-    console.error('AI Quiz Error:', err.message);
-    res.status(500).json({ success: false, message: 'AI service error. Please check your OpenAI API key.' });
+    console.error('AI Quiz Error:', err);
+    res.status(500).json({ success: false, message: `AI service error: ${err.message}` });
   }
 };
 
@@ -138,8 +139,8 @@ exports.keyPoints = async (req, res) => {
     const result = JSON.parse(completion.choices[0].message.content);
     res.json({ success: true, ...result, fileName: ctx.name });
   } catch (err) {
-    console.error('AI KeyPoints Error:', err.message);
-    res.status(500).json({ success: false, message: 'AI service error. Please check your OpenAI API key.' });
+    console.error('AI KeyPoints Error:', err);
+    res.status(500).json({ success: false, message: `AI service error: ${err.message}` });
   }
 };
 
@@ -169,7 +170,7 @@ exports.semanticSearch = async (req, res) => {
     const results = (aiResult.results || []).map((r) => ({ ...r, file: files[r.index] }));
     res.json({ success: true, results });
   } catch (err) {
-    console.error('AI Search Error:', err.message);
-    res.status(500).json({ success: false, message: 'AI service error. Please check your OpenAI API key.' });
+    console.error('AI Search Error:', err);
+    res.status(500).json({ success: false, message: `AI service error: ${err.message}` });
   }
 };
