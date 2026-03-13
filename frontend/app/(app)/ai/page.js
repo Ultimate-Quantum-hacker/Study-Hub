@@ -45,7 +45,10 @@ export default function AIPage() {
       const history = messages.slice(-10);
       const res = await aiAPI.chat({ message: msg, fileId: selectedFile?._id, conversationHistory: history });
       addBotMessage(res.data.reply);
-    } catch { addBotMessage('❌ Sorry, I ran into an error. Please check your OpenAI API key.'); }
+    } catch (err) {
+      const errMsg = err.response?.data?.message || 'Sorry, I ran into an error. Please check your OpenAI API key.';
+      addBotMessage(`❌ ${errMsg}`);
+    }
     finally { setLoading(false); }
   };
 
@@ -58,7 +61,10 @@ export default function AIPage() {
     try {
       const res = await aiAPI.summarize(selectedFile._id);
       addBotMessage(`## 📚 Summary: ${res.data.fileName}\n\n${res.data.summary}`);
-    } catch { addBotMessage('❌ Failed to generate summary.'); }
+    } catch (err) {
+      const errMsg = err.response?.data?.message || 'Failed to generate summary.';
+      addBotMessage(`❌ ${errMsg}`);
+    }
     finally { setLoading(false); setActiveAction(null); }
   };
 
@@ -76,7 +82,10 @@ export default function AIPage() {
         formatted += `**Q${i + 1}:** ${q.question}\n${q.options?.join('\n') || ''}\n\n**Answer:** ${q.answer}\n*${q.explanation}*\n\n---\n\n`;
       });
       addBotMessage(formatted);
-    } catch { addBotMessage('❌ Failed to generate quiz.'); }
+    } catch (err) {
+      const errMsg = err.response?.data?.message || 'Failed to generate quiz.';
+      addBotMessage(`❌ ${errMsg}`);
+    }
     finally { setLoading(false); setActiveAction(null); }
   };
 
@@ -93,7 +102,10 @@ export default function AIPage() {
       if (res.data.concepts?.length) formatted += `### Core Concepts\n${res.data.concepts.map((c) => `- ${c}`).join('\n')}\n\n`;
       if (res.data.terms?.length) formatted += `### Key Terms\n${res.data.terms.map((t) => `**${t.term}**: ${t.definition}`).join('\n\n')}`;
       addBotMessage(formatted);
-    } catch { addBotMessage('❌ Failed to extract key points.'); }
+    } catch (err) {
+      const errMsg = err.response?.data?.message || 'Failed to extract key points.';
+      addBotMessage(`❌ ${errMsg}`);
+    }
     finally { setLoading(false); setActiveAction(null); }
   };
 
