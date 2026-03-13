@@ -56,7 +56,7 @@ export default function ChannelsPage() {
   const dms = filtered.filter((c) => c.type === 'direct');
 
   return (
-    <div style={{ padding: 28, maxWidth: 900, margin: '0 auto', overflowY: 'auto', height: '100%' }}>
+    <div className="fifa-entrance" style={{ padding: 28, maxWidth: 900, margin: '0 auto', overflowY: 'auto', height: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>Channels</h1>
@@ -111,7 +111,7 @@ export default function ChannelsPage() {
               {discoverChannels.map((c) => {
                 const alreadyJoined = myChannelIds.has(c._id);
                 return (
-                  <div key={c._id} className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div key={c._id} className="card fifa-card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ width: 36, height: 36, background: 'var(--accent-dim)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Hash size={16} color="var(--accent)" />
                     </div>
@@ -174,7 +174,7 @@ export default function ChannelsPage() {
               const other = c.members?.find((m) => m._id !== user?._id);
               const unread = unreadCounts[c._id] || 0;
               return (
-                <div key={c._id} className="card" style={{ padding: '14px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14 }}
+                <div key={c._id} className="card fifa-card" style={{ padding: '14px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14 }}
                   onClick={() => router.push(`/channels/${c._id}`)}>
                   <div className="avatar-wrapper" style={{ position: 'relative' }}>
                     <div className="avatar avatar-md">{other?.username?.[0]?.toUpperCase() || '?'}</div>

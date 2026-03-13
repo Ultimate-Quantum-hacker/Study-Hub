@@ -1,6 +1,7 @@
 import './globals.css';
 import MouseGlow from '../components/MouseGlow';
 import CustomCursor from '../components/CustomCursor';
+import BackgroundShards from '../components/BackgroundShards';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
@@ -16,6 +17,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.svg" />
       </head>
       <body suppressHydrationWarning className="mouse-glow-wrapper">
+        <BackgroundShards />
         <CustomCursor />
         <MouseGlow />
         {children}

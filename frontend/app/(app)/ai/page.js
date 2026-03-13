@@ -114,7 +114,7 @@ export default function AIPage() {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    <div className="fifa-entrance" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Header */}
       <div className="topbar">
         <Bot size={18} style={{ color: 'var(--accent)' }} />

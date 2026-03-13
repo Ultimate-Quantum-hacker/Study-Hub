@@ -42,7 +42,7 @@ export default function ProfilePage() {
   const currentAvatar = avatarPreview || (user?.avatar ? `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${user.avatar}` : null);
 
   return (
-    <div style={{ padding: 28, maxWidth: 600, margin: '0 auto', overflowY: 'auto', height: '100%' }}>
+    <div className="fifa-entrance" style={{ padding: 28, maxWidth: 600, margin: '0 auto', overflowY: 'auto', height: '100%' }}>
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>Profile Settings</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 4 }}>Manage your account details and appearance</p>

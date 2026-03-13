@@ -136,7 +136,7 @@ export default function ChannelPage() {
   );
 
   return (
-    <div className="chat-container" {...getRootProps()}>
+    <div className="chat-container fifa-entrance" {...getRootProps()}>
       <input {...getInputProps()} />
 
       {/* Header */}

@@ -82,7 +82,7 @@ export default function ModulesPage() {
   const formatSize = (bytes) => bytes > 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : (bytes / 1024).toFixed(0) + ' KB';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
+    <div className="fifa-entrance" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
       <div className="topbar">
         <BookOpen size={18} style={{ color: 'var(--text-muted)' }} />
         <span className="topbar-title">Course Module Library</span>
@@ -123,7 +123,7 @@ export default function ModulesPage() {
         ) : (
           <div className="grid-3" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
             {files.map((file) => (
-              <div key={file._id} className="file-card" onClick={() => setPreview(file)}>
+              <div key={file._id} className="file-card fifa-card" onClick={() => setPreview(file)}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                   <div className="file-icon" style={{ background: 'var(--accent-dim)' }}>
                     {FILE_ICONS[file.mimeType] || '📎'}

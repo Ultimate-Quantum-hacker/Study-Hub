@@ -1168,3 +1168,53 @@ body.has-custom-cursor .sidebar-item {
 a, button, input, textarea, [role="button"], .sidebar-item {
   cursor: none !important;
 }
+
+/* =========================================
+   FUTURISTIC GAME-STYLE ANIMATIONS
+   ========================================= */
+
+@keyframes float-shard {
+  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  33% { transform: translate(30px, -50px) rotate(10deg) scale(1.1); }
+  66% { transform: translate(-20px, 40px) rotate(-5deg) scale(0.9); }
+}
+
+@keyframes staggered-reveal {
+  0% { opacity: 0; transform: translateY(30px) skewY(2deg); filter: blur(10px); }
+  100% { opacity: 1; transform: translateY(0) skewY(0deg); filter: blur(0); }
+}
+
+@keyframes light-sweep {
+  0% { transform: translateX(-100%) skewX(-45deg); opacity: 0; }
+  20% { opacity: 0.5; }
+  50% { transform: translateX(100%) skewX(-45deg); opacity: 0; }
+  100% { transform: translateX(100%) skewX(-45deg); opacity: 0; }
+}
+
+.fifa-entrance {
+  animation: staggered-reveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.fifa-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fifa-card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: light-sweep 4s infinite linear;
+  pointer-events: none;
+}
+
+.fifa-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(168, 85, 247, 0.2);
+}
