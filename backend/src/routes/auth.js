@@ -30,7 +30,4 @@ router.post('/reset-password',
 router.get('/me', authenticate, authController.getMe);
 router.post('/logout', authenticate, authController.logout);
 
-// TEMPORARY ADMIN ROUTE
-router.get('/make-me-admin', authController.makeMeAdmin);
-
 module.exports = router;
