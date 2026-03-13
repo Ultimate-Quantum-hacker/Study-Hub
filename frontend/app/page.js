@@ -13,6 +13,8 @@ export default function HomePage() {
         const u = useAuthStore.getState().user;
         if (u) router.push('/channels');
         else router.push('/login');
+      }).catch(() => {
+        router.push('/login');
       });
     } else {
       router.push('/login');
