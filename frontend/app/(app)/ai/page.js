@@ -11,7 +11,7 @@ export default function AIPage() {
   const searchParams = useSearchParams();
   const initialFileId = searchParams.get('file');
   const [messages, setMessages] = useState([
-    { role: 'bot', content: "👋 Hi! I'm **StudyBot**, your AI research assistant. I can:\n\n- 📚 **Summarize** course modules\n- ❓ **Generate quiz questions** from your materials\n- 🔑 **Extract key concepts** and terms\n- 💬 **Answer questions** about any uploaded document\n- 🔍 **Semantic search** across all your modules\n\nSelect a document below or just ask me anything!" }
+    { role: 'bot', content: "🚀 **StudyBot v2.0** is online! I can help you with:\n\n- 📚 **Summarize** course modules\n- ❓ **Generate quiz questions**\n- 🔑 **Extract key concepts**\n- 💬 **Answer questions** about documents\n- 🔍 **Semantic search**\n\nSelect a document above or just ask me anything!" }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,12 +42,16 @@ export default function AIPage() {
     setInput('');
     setLoading(true);
     try {
-      const history = messages.slice(-10);
+      const history = messages.slice(-10).map(m => ({ role: m.role, content: m.content }));
       const res = await aiAPI.chat({ message: msg, fileId: selectedFile?._id, conversationHistory: history });
       addBotMessage(res.data.reply);
     } catch (err) {
-      const errMsg = err.response?.data?.message || 'Sorry, I ran into an error. Please check your OpenAI API key.';
-      addBotMessage(`❌ ${errMsg}`);
+      console.error('Full AI Error:', err);
+      const status = err.response?.status;
+      const serverMsg = err.response?.data?.message;
+      const genericMsg = err.message || 'Unknown network error';
+      
+      addBotMessage(`⚠️ **AI Error (${status || 'Network'})**\n\n${serverMsg || genericMsg}\n\n*Please ensure your OPENAI_API_KEY is correctly set in Render and corresponds to a funded OpenAI account.*`);
     }
     finally { setLoading(false); }
   };
