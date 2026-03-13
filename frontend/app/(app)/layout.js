@@ -23,7 +23,12 @@ export default function AppLayout({ children }) {
     const socket = getSocket();
     if (!socket) return;
 
-    socket.on('new-message', (message) => addMessage(message));
+    socket.on('new-message', (message) => {
+      const activeChannelId = useUIStore.getState().activeChannelId;
+      const currentUserId = useAuthStore.getState().user?._id;
+      // Always add to messages list
+      addMessage(message, message.channel === activeChannelId || message.sender?._id === currentUserId);
+    });
     socket.on('message-reaction', ({ messageId, channelId, reactions }) => updateMessageReactions(messageId, channelId, reactions));
     socket.on('user-typing', ({ channelId, userId, username, isTyping }) => setTyping(channelId, userId, username, isTyping));
     socket.on('notification', (notif) => addNotification(notif));

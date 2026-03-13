@@ -56,19 +56,19 @@ export default function AdminPage() {
       </div>
 
       <div className="grid-4" style={{ marginBottom: 32 }}>
-        <div className="stat-card">
+        <div className="stat-card" style={{ cursor: 'pointer', transition: 'transform 0.15s' }} onClick={() => {}} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'} title="View users below">
           <div className="stat-icon" style={{ background: 'var(--accent-dim)', color: 'var(--accent)' }}><Users size={22} /></div>
           <div><div className="stat-value">{stats?.totalUsers || 0}</div><div className="stat-label">Total Users</div></div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ cursor: 'pointer', transition: 'transform 0.15s' }} onClick={() => router.push('/modules')} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'} title="Go to Course Modules">
           <div className="stat-icon" style={{ background: 'rgba(74, 222, 128, 0.15)', color: 'var(--success)' }}><BookOpen size={22} /></div>
           <div><div className="stat-value">{stats?.totalFiles || 0}</div><div className="stat-label">Course Modules</div></div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ cursor: 'pointer', transition: 'transform 0.15s' }} onClick={() => router.push('/channels')} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'} title="Go to Channels">
           <div className="stat-icon" style={{ background: 'rgba(251, 191, 36, 0.15)', color: 'var(--warning)' }}><MessageSquare size={22} /></div>
           <div><div className="stat-value">{stats?.totalMessages || 0}</div><div className="stat-label">Messages Sent</div></div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ cursor: 'pointer', transition: 'transform 0.15s' }} onClick={() => router.push('/channels')} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'} title="Go to Channels">
           <div className="stat-icon" style={{ background: 'rgba(248, 113, 113, 0.15)', color: 'var(--danger)' }}><Hash size={22} /></div>
           <div><div className="stat-value">{stats?.totalChannels || 0}</div><div className="stat-label">Active Channels</div></div>
         </div>

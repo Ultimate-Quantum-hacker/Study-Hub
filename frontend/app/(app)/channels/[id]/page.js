@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
-import { useAuthStore, useChatStore } from '../../../../store/index';
+import { useAuthStore, useChatStore, useUIStore } from '../../../../store/index';
 import { channelsAPI } from '../../../../lib/api';
 import { getSocket } from '../../../../lib/socket';
 import { Hash, Paperclip, Smile, Send, Phone, Video, Users, Reply, X, Image } from 'lucide-react';
@@ -18,6 +18,7 @@ export default function ChannelPage() {
   const { id } = useParams();
   const { user } = useAuthStore();
   const { messages, setMessages, addMessage, clearUnread, typingUsers } = useChatStore();
+  const { setActiveChannel } = useUIStore();
   const [channel, setChannel] = useState(null);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
@@ -35,6 +36,8 @@ export default function ChannelPage() {
 
   useEffect(() => {
     if (!id) return;
+    setActiveChannel(id);
+    clearUnread(id);
     setLoading(true);
     Promise.all([
       channelsAPI.getById(id),
@@ -47,6 +50,8 @@ export default function ChannelPage() {
 
     const socket = getSocket();
     if (socket) socket.emit('join-channel', id);
+
+    return () => setActiveChannel(null);
   }, [id]);
 
   useEffect(() => {

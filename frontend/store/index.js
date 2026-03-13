@@ -84,14 +84,13 @@ export const useChatStore = create((set, get) => ({
   setMessages: (channelId, messages) =>
     set((s) => ({ messages: { ...s.messages, [channelId]: messages } })),
 
-  addMessage: (message) => {
+  addMessage: (message, skipUnread = false) => {
     const chId = message.channel;
     set((s) => ({
       messages: { ...s.messages, [chId]: [...(s.messages[chId] || []), message] },
-      unreadCounts: {
-        ...s.unreadCounts,
-        [chId]: (s.unreadCounts[chId] || 0) + 1,
-      },
+      unreadCounts: skipUnread
+        ? s.unreadCounts
+        : { ...s.unreadCounts, [chId]: (s.unreadCounts[chId] || 0) + 1 },
     }));
   },
 

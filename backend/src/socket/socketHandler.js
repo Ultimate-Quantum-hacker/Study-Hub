@@ -96,7 +96,7 @@ const socketHandler = (io) => {
         message.reactions.push({ emoji, users: [socket.user._id] });
       }
       await message.save();
-      io.to(message.channel.toString()).emit('message-reaction', { messageId, reactions: message.reactions });
+      io.to(message.channel.toString()).emit('message-reaction', { messageId, channelId: message.channel.toString(), reactions: message.reactions });
     });
 
     // TYPING

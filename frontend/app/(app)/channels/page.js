@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { channelsAPI } from '../../../lib/api';
-import { useAuthStore } from '../../../store/index';
+import { useAuthStore, useChatStore } from '../../../store/index';
 import { Hash, Users, Plus, Search, MessageSquare, Globe, LogIn } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -15,6 +15,7 @@ export default function ChannelsPage() {
   const [showDiscover, setShowDiscover] = useState(false);
   const [newChannel, setNewChannel] = useState({ name: '', description: '' });
   const { user } = useAuthStore();
+  const { unreadCounts } = useChatStore();
   const router = useRouter();
 
   const fetchChannels = () => {
@@ -141,21 +142,29 @@ export default function ChannelsPage() {
         <>
           <h2 style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Group Channels ({groups.length})</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 28 }}>
-            {groups.map((c) => (
+            {groups.map((c) => {
+              const unread = unreadCounts[c._id] || 0;
+              return (
               <div key={c._id} className="card" style={{ padding: '14px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14 }}
                 onClick={() => router.push(`/channels/${c._id}`)}>
-                <div style={{ width: 40, height: 40, background: 'var(--accent-dim)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 40, height: 40, background: 'var(--accent-dim)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                   <Hash size={18} color="var(--accent)" />
+                  {unread > 0 && (
+                    <span style={{ position: 'absolute', top: -4, right: -4, background: 'var(--success)', color: '#fff', fontSize: 10, fontWeight: 700, borderRadius: 10, minWidth: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+                      {unread > 99 ? '99+' : unread}
+                    </span>
+                  )}
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 600 }}># {c.name}</div>
+                  <div style={{ fontWeight: unread > 0 ? 800 : 600 }}># {c.name}</div>
                   {c.description && <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{c.description}</div>}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--text-muted)', fontSize: 12 }}>
                   <Users size={13} /> {c.members?.length || 0}
                 </div>
               </div>
-            ))}
+              );
+            })}
             {groups.length === 0 && <p style={{ color: 'var(--text-muted)', fontSize: 13 }}>No group channels yet. Click "Discover" to find and join channels!</p>}
           </div>
 
@@ -163,18 +172,30 @@ export default function ChannelsPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             {dms.map((c) => {
               const other = c.members?.find((m) => m._id !== user?._id);
+              const unread = unreadCounts[c._id] || 0;
               return (
                 <div key={c._id} className="card" style={{ padding: '14px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 14 }}
                   onClick={() => router.push(`/channels/${c._id}`)}>
-                  <div className="avatar-wrapper">
+                  <div className="avatar-wrapper" style={{ position: 'relative' }}>
                     <div className="avatar avatar-md">{other?.username?.[0]?.toUpperCase() || '?'}</div>
                     {other?.isOnline && <span className="online-dot" />}
+                    {unread > 0 && (
+                      <span style={{ position: 'absolute', top: -4, right: -4, background: 'var(--success)', color: '#fff', fontSize: 10, fontWeight: 700, borderRadius: 10, minWidth: 18, height: 18, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px' }}>
+                        {unread > 99 ? '99+' : unread}
+                      </span>
+                    )}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 600 }}>{other?.username || 'Unknown'}</div>
+                    <div style={{ fontWeight: unread > 0 ? 800 : 600 }}>{other?.username || 'Unknown'}</div>
                     <div style={{ fontSize: 12, color: other?.isOnline ? 'var(--success)' : 'var(--text-muted)' }}>{other?.isOnline ? '● Online' : 'Offline'}</div>
                   </div>
-                  <MessageSquare size={14} color="var(--text-muted)" />
+                  {unread > 0 ? (
+                    <span style={{ background: 'var(--success)', color: '#fff', fontSize: 10, fontWeight: 700, borderRadius: 10, minWidth: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 5px' }}>
+                      {unread}
+                    </span>
+                  ) : (
+                    <MessageSquare size={14} color="var(--text-muted)" />
+                  )}
                 </div>
               );
             })}
