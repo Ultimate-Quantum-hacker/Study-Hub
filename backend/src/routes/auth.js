@@ -7,7 +7,15 @@ const { body } = require('express-validator');
 const { handleValidation } = require('../middleware/validation');
 
 router.post('/register',
-  [body('username').trim().isLength({ min: 3, max: 30 }), body('email').isEmail(), body('password').isLength({ min: 6 })],
+  [
+    body('username').trim().isLength({ min: 3, max: 30 }).withMessage('Username must be 3-30 characters'),
+    body('email').isEmail().withMessage('Please enter a valid email'),
+    body('password')
+      .isLength({ min: 8 }).withMessage('Password must be at least 8 characters')
+      .matches(/[A-Z]/).withMessage('Password must contain an uppercase letter')
+      .matches(/[a-z]/).withMessage('Password must contain a lowercase letter')
+      .matches(/[0-9]/).withMessage('Password must contain a number'),
+  ],
   handleValidation,
   authController.register
 );

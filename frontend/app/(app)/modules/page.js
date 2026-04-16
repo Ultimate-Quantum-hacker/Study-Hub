@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { filesAPI } from '../../../lib/api';
-import { useAuthStore } from '../../../store/index';
-import { Upload, Search, Download, Trash2, BookOpen, Filter, Eye, X, Bot } from 'lucide-react';
+import { useAuthStore, useUIStore } from '../../../store/index';
+import { Upload, Search, Download, Trash2, BookOpen, Filter, Eye, X, Bot, Menu } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
@@ -22,6 +22,7 @@ export default function ModulesPage() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const { user } = useAuthStore();
+  const { setSidebarOpen } = useUIStore();
   const router = useRouter();
   const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
@@ -84,14 +85,17 @@ export default function ModulesPage() {
   return (
     <div className="fifa-entrance" style={{ display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto' }}>
       <div className="topbar">
+        <button className="btn btn-ghost btn-icon mobile-only" style={{ marginRight: 8 }} onClick={() => setSidebarOpen(true)}>
+          <Menu size={20} />
+        </button>
         <BookOpen size={18} style={{ color: 'var(--text-muted)' }} />
-        <span className="topbar-title">Course Module Library</span>
+        <span className="topbar-title electric-glow" style={{ fontSize: 'clamp(14px, 4vw, 18px)' }}>Course Modules</span>
         <div className="topbar-actions">
-          <button className="btn btn-primary" onClick={() => setShowUpload(true)}><Upload size={15} /> Upload Module</button>
+          <button className="btn btn-primary btn-sm" onClick={() => setShowUpload(true)}><Upload size={14} /> <span className="desktop-only text-sm">Upload</span></button>
         </div>
       </div>
 
-      <div style={{ padding: '20px 28px', flex: 1 }}>
+      <div style={{ padding: '20px clamp(12px, 5vw, 28px)', flex: 1 }}>
         {/* Filters */}
         <div style={{ display: 'flex', gap: 10, marginBottom: 20, flexWrap: 'wrap' }}>
           <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>

@@ -7,11 +7,16 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || 'sk-placeholde
 const MODEL = process.env.OPENAI_MODEL || 'gpt-4o';
 
 function requireApiKey(req, res) {
-  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-temporary-fake-key') {
+  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-temporary-fake-key' || process.env.OPENAI_API_KEY === 'provide_openai_api_key_here') {
+    if (process.env.NODE_ENV === 'development') return true; // Allow mock mode
     res.status(503).json({ success: false, message: 'AI service is not configured. Please set a valid OPENAI_API_KEY.' });
     return false;
   }
   return true;
+}
+
+function isMockMode() {
+  return !process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'sk-temporary-fake-key' || process.env.OPENAI_API_KEY === 'provide_openai_api_key_here';
 }
 
 // Helper: get context from file
@@ -57,6 +62,13 @@ If information is not in the document, say so clearly.`;
       { role: 'user', content: message },
     ];
 
+    if (isMockMode()) {
+      return res.json({ 
+        success: true, 
+        reply: `🤖 **StudyBot Mock Mode**\n\nI see you're asking about: "${message.slice(0, 50)}${message.length > 50 ? '...' : ''}"\n\nCurrently, the OpenAI API key is not set. In a real scenario, I would analyze your documents and provide a detailed answer. \n\n*Document context detected:* ${fileId ? 'Yes' : 'No'}` 
+      });
+    }
+
     const completion = await openai.chat.completions.create({ model: MODEL, messages, max_tokens: 2000 });
     const reply = completion.choices[0].message.content;
     res.json({ success: true, reply });
@@ -74,6 +86,11 @@ exports.summarize = async (req, res) => {
     const ctx = await getFileContext(fileId);
     if (!ctx) return res.status(404).json({ success: false, message: 'File not found' });
     if (!ctx.text) return res.status(400).json({ success: false, message: 'Document has not been processed yet.' });
+
+    if (isMockMode()) {
+      const summary = `## 📚 Mock Summary: ${ctx.name}\n\n1. **Core Topic**: Introduction to ${ctx.course}.\n2. **Key Findings**: Detailed analysis of the subject matter.\n3. **Conclusion**: Summary of the main takeaways.\n\n*Note: This is a simulated response for development.*`;
+      return res.json({ success: true, summary, fileName: ctx.name });
+    }
 
     const completion = await openai.chat.completions.create({
       model: MODEL,
@@ -101,6 +118,16 @@ exports.generateQuiz = async (req, res) => {
     if (!ctx) return res.status(404).json({ success: false, message: 'File not found' });
     if (!ctx.text) return res.status(400).json({ success: false, message: 'Document has not been processed yet.' });
 
+    if (isMockMode()) {
+      const result = {
+        questions: [
+          { question: `What is the primary theme of ${ctx.course}?`, options: ['A) Subject A', 'B) Subject B', 'C) Subject C', 'D) Subject D'], answer: 'A', explanation: 'This is the fundamental concept discussed in the intro.' },
+          { question: `Who uploaded ${ctx.name}?`, options: [`A) ${ctx.uploader}`, 'B) Unknown', 'C) AI', 'D) Admin'], answer: 'A', explanation: 'Metadata shows the uploader clearly.' },
+        ],
+      };
+      return res.json({ success: true, ...result, fileName: ctx.name });
+    }
+
     const completion = await openai.chat.completions.create({
       model: MODEL,
       messages: [
@@ -126,6 +153,15 @@ exports.keyPoints = async (req, res) => {
     const ctx = await getFileContext(fileId);
     if (!ctx) return res.status(404).json({ success: false, message: 'File not found' });
     if (!ctx.text) return res.status(400).json({ success: false, message: 'Document has not been processed yet.' });
+
+    if (isMockMode()) {
+      const result = {
+        keyPoints: ['First major point from the doc', 'Second major point', 'Third major point'],
+        concepts: ['Core Theory', 'Practical Application'],
+        terms: [{ term: 'Term A', definition: 'A very important concept.' }, { term: 'Term B', definition: 'Another key terminology.' }],
+      };
+      return res.json({ success: true, ...result, fileName: ctx.name });
+    }
 
     const completion = await openai.chat.completions.create({
       model: MODEL,
@@ -155,6 +191,17 @@ exports.semanticSearch = async (req, res) => {
     if (!files.length) return res.json({ success: true, results: [] });
 
     const fileList = files.map((f, i) => `[${i}] "${f.originalName}" (${f.course}): ${f.extractedText.slice(0, 1000)}`).join('\n\n---\n\n');
+
+    if (isMockMode()) {
+      const results = files.slice(0, 3).map((f, i) => ({
+        index: i,
+        relevance: i === 0 ? 'high' : 'medium',
+        snippet: `Mock snippet from ${f.originalName}...`,
+        reason: 'Matches keyword intent.',
+        file: f,
+      }));
+      return res.json({ success: true, results });
+    }
 
     const completion = await openai.chat.completions.create({
       model: MODEL,

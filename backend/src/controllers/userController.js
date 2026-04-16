@@ -5,10 +5,23 @@ const Channel = require('../models/Channel');
 const path = require('path');
 const fs = require('fs');
 
-// GET /api/users — all users (admin or for searching)
+// GET /api/users — search users with pagination
 exports.getAllUsers = async (req, res) => {
-  const users = await User.find().select('-password').sort({ createdAt: -1 });
-  res.json({ success: true, users });
+  const { search, page = 1, limit = 30 } = req.query;
+  const query = {};
+  if (search) {
+    query.$or = [
+      { username: new RegExp(search, 'i') },
+      { email: new RegExp(search, 'i') },
+    ];
+  }
+  const users = await User.find(query)
+    .select('-password')
+    .sort({ isOnline: -1, lastSeen: -1 })
+    .skip((page - 1) * limit)
+    .limit(parseInt(limit));
+  const total = await User.countDocuments(query);
+  res.json({ success: true, users, total, pages: Math.ceil(total / limit) });
 };
 
 // GET /api/users/:id

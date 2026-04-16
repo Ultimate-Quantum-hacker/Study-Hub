@@ -7,7 +7,7 @@ const messageSchema = new mongoose.Schema(
     content: { type: String, default: '' },
     type: {
       type: String,
-      enum: ['text', 'image', 'file', 'system'],
+      enum: ['text', 'image', 'file', 'system', 'poll'],
       default: 'text',
     },
     fileUrl: { type: String },
@@ -23,7 +23,18 @@ const messageSchema = new mongoose.Schema(
     ],
     isEdited: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
+    isPinned: { type: Boolean, default: false },
     editHistory: [{ content: String, editedAt: Date }],
+    // Poll fields
+    pollQuestion: { type: String },
+    pollOptions: [
+      {
+        text: { type: String },
+        votes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+      },
+    ],
+    pollMultipleChoice: { type: Boolean, default: false },
+    pollEndsAt: { type: Date },
   },
   { timestamps: true }
 );

@@ -1,9 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useAuthStore } from '../../../store/index';
+import { useAuthStore, useUIStore } from '../../../store/index';
 import { getSocket } from '../../../lib/socket';
-import { Phone, Video, Mic, MicOff, VideoIcon, VideoOff, PhoneOff, Monitor } from 'lucide-react';
+import { Phone, Video, Mic, MicOff, VideoIcon, VideoOff, PhoneOff, Monitor, Menu } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { channelsAPI } from '../../../lib/api';
 
@@ -12,6 +12,7 @@ export default function CallsPage() {
   const channelId = searchParams.get('channel');
   const callType = searchParams.get('type') || 'video';
   const { user } = useAuthStore();
+  const { setSidebarOpen } = useUIStore();
   const [localStream, setLocalStream] = useState(null);
   const [remoteStreams, setRemoteStreams] = useState({});
   const [isMuted, setIsMuted] = useState(false);
@@ -160,9 +161,12 @@ export default function CallsPage() {
   const remoteStreamEntries = Object.entries(remoteStreams);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg-primary)' }}>
+    <div className="fifa-entrance" style={{ display: 'flex', flexDirection: 'column', height: '100%', background: 'var(--bg-primary)' }}>
       <div className="topbar">
-        <Phone size={18} style={{ color: 'var(--accent)' }} /> <span className="topbar-title">Voice & Video Calls</span>
+        <button className="btn btn-ghost btn-icon mobile-only" style={{ marginRight: 8 }} onClick={() => setSidebarOpen(true)}>
+          <Menu size={20} />
+        </button>
+        <Phone size={18} style={{ color: 'var(--accent)' }} /> <span className="topbar-title electric-glow" style={{ fontSize: 'clamp(14px, 4vw, 18px)' }}>Voice & Video Calls</span>
       </div>
 
       {/* Incoming call banner */}
@@ -178,13 +182,13 @@ export default function CallsPage() {
       )}
 
       {/* Video grid */}
-      <div className="video-grid" style={{ gridTemplateColumns: remoteStreamEntries.length > 0 ? 'repeat(auto-fit, minmax(300px, 1fr))' : '1fr', flex: 1 }}>
+      <div className="video-grid" style={{ gridTemplateColumns: remoteStreamEntries.length > 0 ? 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))' : '1fr', flex: 1 }}>
         {/* Local video */}
-        <div className="video-tile" style={{ minHeight: 240 }}>
+        <div className="video-tile fifa-card" style={{ minHeight: 240, border: '1px solid var(--accent-glow)' }}>
           <video ref={localVideoRef} autoPlay muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }} />
-          <div className="video-tile-name">You {isMuted ? '🔇' : ''}</div>
+          <div className="video-tile-name electric-glow">You {isMuted ? '🔇' : ''}</div>
           {(isVideoOff || !localStream) && (
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-elevated)' }}>
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
               <div className="avatar avatar-xl">{user?.username?.[0]?.toUpperCase()}</div>
             </div>
           )}
@@ -232,9 +236,9 @@ function RemoteVideo({ stream, peerId }) {
   const ref = useRef(null);
   useEffect(() => { if (ref.current && stream) ref.current.srcObject = stream; }, [stream]);
   return (
-    <div className="video-tile" style={{ minHeight: 240 }}>
+    <div className="video-tile fifa-card" style={{ minHeight: 240, border: '1px solid var(--border)' }}>
       <video ref={ref} autoPlay playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-      <div className="video-tile-name">Remote user</div>
+      <div className="video-tile-name electric-glow">Remote User</div>
     </div>
   );
 }

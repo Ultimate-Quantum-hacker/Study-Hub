@@ -25,8 +25,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-card fade-in">
+    <div className="auth-page fifa-entrance">
+      <div className="auth-card fifa-card">
         <div className="auth-logo">
           <div className="auth-logo-icon">📚</div>
           <div className="auth-logo-title">Study Hub</div>

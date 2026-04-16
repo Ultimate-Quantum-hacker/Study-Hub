@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useUIStore } from '../../../store/index';
 import { aiAPI, filesAPI } from '../../../lib/api';
-import { Bot, Send, BookOpen, FileText, Brain, Zap, X, ChevronDown } from 'lucide-react';
+import { Bot, Send, BookOpen, FileText, Brain, Zap, X, ChevronDown, Menu } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import toast from 'react-hot-toast';
@@ -17,7 +18,7 @@ export default function AIPage() {
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [activeAction, setActiveAction] = useState(null);
+  const { setSidebarOpen } = useUIStore();
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -117,16 +118,19 @@ export default function AIPage() {
     <div className="fifa-entrance" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       {/* Header */}
       <div className="topbar">
+        <button className="btn btn-ghost btn-icon mobile-only" style={{ marginRight: 8 }} onClick={() => setSidebarOpen(true)}>
+          <Menu size={20} />
+        </button>
         <Bot size={18} style={{ color: 'var(--accent)' }} />
-        <span className="topbar-title">AI Research Assistant</span>
+        <span className="topbar-title electric-glow" style={{ fontSize: 'clamp(14px, 4vw, 18px)' }}>AI Research Assistant</span>
 
         {/* File selector */}
-        <div style={{ marginLeft: 16, position: 'relative' }}>
-          <select className="form-input" style={{ width: 220, fontSize: 12 }}
+        <div style={{ marginLeft: 8, flex: 1, minWidth: 0, position: 'relative' }}>
+          <select className="form-input" style={{ width: '100%', maxWidth: 220, fontSize: 12 }}
             value={selectedFile?._id || ''}
             onChange={(e) => { const f = files.find((x) => x._id === e.target.value); setSelectedFile(f || null); if (f) addBotMessage(`📄 Loaded **"${f.originalName}"**. Ask me anything about it!`); }}>
-            <option value="">No document selected</option>
-            {files.map((f) => <option key={f._id} value={f._id}>{f.originalName} ({f.course})</option>)}
+            <option value="">No document...</option>
+            {files.map((f) => <option key={f._id} value={f._id}>{f.originalName}</option>)}
           </select>
         </div>
 
@@ -145,7 +149,7 @@ export default function AIPage() {
       )}
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="stagger-2" style={{ flex: 1, overflowY: 'auto', padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
         {messages.map((msg, i) => (
           <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', maxWidth: '100%', flexDirection: msg.role === 'user' ? 'row-reverse' : 'row' }}>
             {msg.role === 'bot' && (
@@ -153,7 +157,7 @@ export default function AIPage() {
                 <Bot size={18} color="white" />
               </div>
             )}
-            <div className={`ai-message ${msg.role === 'user' ? 'user' : 'bot'}`} style={{ maxWidth: '75%' }}>
+            <div className={`ai-message ${msg.role === 'user' ? 'user' : 'bot'}`} style={{ maxWidth: 'min(85%, 600px)' }}>
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
             </div>
           </div>

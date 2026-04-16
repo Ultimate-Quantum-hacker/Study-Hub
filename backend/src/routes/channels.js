@@ -9,8 +9,11 @@ router.post('/', authenticate, channelController.createChannel);
 router.post('/direct', authenticate, channelController.getOrCreateDirectChannel);
 router.get('/:id', authenticate, channelController.getChannel);
 router.put('/:id', authenticate, channelController.updateChannel);
-router.delete('/:id', authenticate, authorize('admin'), channelController.deleteChannel);
+router.delete('/:id', authenticate, channelController.deleteChannel);
 router.post('/:id/join', authenticate, channelController.joinChannel);
+router.post('/:id/leave', authenticate, channelController.leaveChannel);
 router.get('/:id/messages', authenticate, channelController.getMessages);
+router.get('/:id/messages/search', authenticate, channelController.searchMessages);
+router.get('/:id/pinned', authenticate, channelController.getPinnedMessages);
 
 module.exports = router;

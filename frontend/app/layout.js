@@ -17,6 +17,10 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/favicon.svg" />
       </head>
       <body suppressHydrationWarning className="mouse-glow-wrapper">
+        {/* Technical Overlays */}
+        <div className="tech-overlay scanlines" />
+        <div className="tech-overlay noise" />
+        
         <BackgroundShards />
         <CustomCursor />
         <MouseGlow />

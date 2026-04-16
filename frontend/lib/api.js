@@ -38,7 +38,7 @@ export const authAPI = {
 
 // USERS
 export const usersAPI = {
-  getAll: () => api.get('/api/users'),
+  getAll: (params) => api.get('/api/users', { params }),
   getById: (id) => api.get(`/api/users/${id}`),
   updateProfile: (data) => api.put('/api/users/profile', data, { headers: { 'Content-Type': 'multipart/form-data' } }),
   deleteUser: (id) => api.delete(`/api/users/${id}`),
@@ -56,8 +56,11 @@ export const channelsAPI = {
   update: (id, data) => api.put(`/api/channels/${id}`, data),
   delete: (id) => api.delete(`/api/channels/${id}`),
   join: (id) => api.post(`/api/channels/${id}/join`),
+  leave: (id) => api.post(`/api/channels/${id}/leave`),
   createDirect: (userId) => api.post('/api/channels/direct', { userId }),
   getMessages: (id, params) => api.get(`/api/channels/${id}/messages`, { params }),
+  searchMessages: (id, params) => api.get(`/api/channels/${id}/messages/search`, { params }),
+  getPinned: (id) => api.get(`/api/channels/${id}/pinned`),
 };
 
 // FILES

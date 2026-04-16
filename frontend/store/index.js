@@ -104,6 +104,46 @@ export const useChatStore = create((set, get) => ({
       },
     })),
 
+  editMessage: (messageId, channelId, content) =>
+    set((s) => ({
+      messages: {
+        ...s.messages,
+        [channelId]: (s.messages[channelId] || []).map((m) =>
+          m._id === messageId ? { ...m, content, isEdited: true } : m
+        ),
+      },
+    })),
+
+  deleteMessage: (messageId, channelId) =>
+    set((s) => ({
+      messages: {
+        ...s.messages,
+        [channelId]: (s.messages[channelId] || []).map((m) =>
+          m._id === messageId ? { ...m, isDeleted: true, content: '' } : m
+        ),
+      },
+    })),
+
+  updatePollOptions: (messageId, channelId, pollOptions) =>
+    set((s) => ({
+      messages: {
+        ...s.messages,
+        [channelId]: (s.messages[channelId] || []).map((m) =>
+          m._id === messageId ? { ...m, pollOptions } : m
+        ),
+      },
+    })),
+
+  pinMessage: (messageId, channelId, isPinned) =>
+    set((s) => ({
+      messages: {
+        ...s.messages,
+        [channelId]: (s.messages[channelId] || []).map((m) =>
+          m._id === messageId ? { ...m, isPinned } : m
+        ),
+      },
+    })),
+
   setTyping: (channelId, userId, username, isTyping) =>
     set((s) => {
       const current = s.typingUsers[channelId] || [];

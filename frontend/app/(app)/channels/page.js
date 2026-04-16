@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { channelsAPI } from '../../../lib/api';
-import { useAuthStore, useChatStore } from '../../../store/index';
-import { Hash, Users, Plus, Search, MessageSquare, Globe, LogIn } from 'lucide-react';
+import { useAuthStore, useChatStore, useUIStore } from '../../../store/index';
+import { Hash, Users, Plus, Search, MessageSquare, Globe, LogIn, Menu } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -16,6 +16,7 @@ export default function ChannelsPage() {
   const [newChannel, setNewChannel] = useState({ name: '', description: '' });
   const { user } = useAuthStore();
   const { unreadCounts } = useChatStore();
+  const { setSidebarOpen } = useUIStore();
   const router = useRouter();
 
   const fetchChannels = () => {
@@ -56,9 +57,12 @@ export default function ChannelsPage() {
   const dms = filtered.filter((c) => c.type === 'direct');
 
   return (
-    <div className="fifa-entrance" style={{ padding: 28, maxWidth: 900, margin: '0 auto', overflowY: 'auto', height: '100%' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
-        <div>
+    <div className="fifa-entrance" style={{ padding: '28px clamp(16px, 5vw, 28px)', maxWidth: 900, margin: '0 auto', overflowY: 'auto', height: '100%' }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+        <button className="btn btn-ghost btn-icon mobile-only" style={{ marginRight: 12 }} onClick={() => setSidebarOpen(true)}>
+          <Menu size={20} />
+        </button>
+        <div style={{ flex: 1 }}>
           <h1 style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5 }}>Channels</h1>
           <p style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 2 }}>Manage all your group chats and direct messages</p>
         </div>

@@ -6,7 +6,7 @@ import { useAuthStore, useUIStore, useChatStore, useNotificationStore } from '..
 import { channelsAPI } from '../lib/api';
 import {
   Hash, MessageSquare, BookOpen, Bot, Phone, User, Settings, LogOut,
-  Sun, Moon, Plus, Bell, Shield, Menu, X, Users
+  Sun, Moon, Plus, Bell, Shield, Menu, X, Users, ChevronDown, ChevronUp
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -18,6 +18,8 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [showCreateChannel, setShowCreateChannel] = useState(false);
   const [newChannelName, setNewChannelName] = useState('');
+  const [showAllChannels, setShowAllChannels] = useState(false);
+  const [showAllDMs, setShowAllDMs] = useState(false);
 
   useEffect(() => {
     channelsAPI.getAll().then((res) => setChannels(res.data.channels || [])).catch(() => {});
@@ -45,6 +47,7 @@ export default function Sidebar() {
     { href: '/modules', icon: <BookOpen size={17} />, label: 'Course Modules' },
     { href: '/ai', icon: <Bot size={17} />, label: 'AI Assistant' },
     { href: '/calls', icon: <Phone size={17} />, label: 'Calls' },
+    { href: '/people', icon: <Users size={17} />, label: 'People' },
     { href: '/profile', icon: <User size={17} />, label: 'Profile' },
     { href: '/settings', icon: <Settings size={17} />, label: 'Settings' },
   ];
@@ -54,12 +57,20 @@ export default function Sidebar() {
   }
 
   const totalUnread = Object.values(unreadCounts).reduce((s, c) => s + c, 0);
+  const groupChannels = channels.filter((c) => c.type === 'group');
+  const directChannels = channels.filter((c) => c.type === 'direct');
+  const COLLAPSED_LIMIT = 8;
+
+  const visibleGroups = showAllChannels ? groupChannels : groupChannels.slice(0, COLLAPSED_LIMIT);
+  const visibleDMs = showAllDMs ? directChannels : directChannels.slice(0, COLLAPSED_LIMIT);
 
   return (
     <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
       {/* Logo */}
       <div className="sidebar-logo">
-        <div className="sidebar-logo-icon">📚</div>
+        <div className="sidebar-logo-icon">
+          <BookOpen size={20} color="white" />
+        </div>
         <span className="sidebar-logo-text">Study Hub</span>
         <button className="btn btn-ghost btn-icon" style={{ marginLeft: 'auto', display: 'none' }} onClick={() => setSidebarOpen(false)} id="sidebar-close">
           <X size={16} />
@@ -107,7 +118,7 @@ export default function Sidebar() {
           </form>
         )}
 
-        {channels.filter((c) => c.type === 'group').slice(0, 15).map((channel) => {
+        {visibleGroups.map((channel) => {
           const unread = unreadCounts[channel._id] || 0;
           return (
             <Link key={channel._id} href={`/channels/${channel._id}`}
@@ -120,10 +131,20 @@ export default function Sidebar() {
             </Link>
           );
         })}
+        {groupChannels.length > COLLAPSED_LIMIT && (
+          <button
+            className="sidebar-item"
+            style={{ fontSize: 12, color: 'var(--text-muted)', justifyContent: 'center', gap: 4 }}
+            onClick={() => setShowAllChannels(!showAllChannels)}
+          >
+            {showAllChannels ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+            {showAllChannels ? 'Show less' : `Show ${groupChannels.length - COLLAPSED_LIMIT} more`}
+          </button>
+        )}
 
         {/* Direct Messages */}
         <div className="sidebar-section-title" style={{ marginTop: 4 }}>Direct Messages</div>
-        {channels.filter((c) => c.type === 'direct').slice(0, 10).map((channel) => {
+        {visibleDMs.map((channel) => {
           const other = channel.members?.find((m) => m._id !== user?._id);
           const unread = unreadCounts[channel._id] || 0;
           return (
@@ -133,7 +154,7 @@ export default function Sidebar() {
             >
               <div className="avatar-wrapper">
                 <div className="avatar avatar-sm">
-                  {other?.avatar ? <img src={`${process.env.NEXT_PUBLIC_API_URL}${other.avatar}`} className="avatar avatar-sm" /> : other?.username?.[0]?.toUpperCase() || '?'}
+                  {other?.avatar ? <img src={`${process.env.NEXT_PUBLIC_API_URL}${other.avatar}`} className="avatar avatar-sm" alt="" /> : other?.username?.[0]?.toUpperCase() || '?'}
                 </div>
                 {other?.isOnline && <span className="online-dot" style={{ width: 8, height: 8 }} />}
               </div>
@@ -142,6 +163,16 @@ export default function Sidebar() {
             </Link>
           );
         })}
+        {directChannels.length > COLLAPSED_LIMIT && (
+          <button
+            className="sidebar-item"
+            style={{ fontSize: 12, color: 'var(--text-muted)', justifyContent: 'center', gap: 4 }}
+            onClick={() => setShowAllDMs(!showAllDMs)}
+          >
+            {showAllDMs ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+            {showAllDMs ? 'Show less' : `Show ${directChannels.length - COLLAPSED_LIMIT} more`}
+          </button>
+        )}
       </nav>
 
       {/* Footer */}
@@ -149,13 +180,13 @@ export default function Sidebar() {
         <div className="avatar-wrapper">
           <div className="avatar avatar-md" style={{ cursor: 'pointer' }} onClick={() => router.push('/profile')}>
             {user?.avatar
-              ? <img src={`${process.env.NEXT_PUBLIC_API_URL}${user.avatar}`} className="avatar avatar-md" />
+              ? <img src={`${process.env.NEXT_PUBLIC_API_URL}${user.avatar}`} className="avatar avatar-md" alt="" />
               : user?.username?.[0]?.toUpperCase() || 'U'}
           </div>
           {user?.isOnline !== false && <span className="online-dot" />}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, truncate: true }}>{user?.username}</div>
+          <div className="truncate" style={{ fontSize: 13, fontWeight: 600 }}>{user?.username}</div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{user?.role}</div>
         </div>
         <button className="btn btn-ghost btn-icon" onClick={toggleTheme} title="Toggle theme" style={{ padding: 6 }}>

@@ -30,8 +30,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-card fade-in">
+    <div className="auth-page fifa-entrance">
+      <div className="auth-card fifa-card">
         <div className="auth-logo">
           <div className="auth-logo-icon">📚</div>
           <div className="auth-logo-title">Study Hub</div>
@@ -78,16 +78,49 @@ export default function RegisterPage() {
                 type={showPw ? 'text' : 'password'}
                 className="form-input"
                 style={{ paddingLeft: 36, paddingRight: 40 }}
-                placeholder="Min. 6 characters"
+                placeholder="Min. 8 characters"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                required minLength={6}
+                required minLength={8}
               />
               <button type="button" onClick={() => setShowPw(!showPw)}
                 style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>
                 {showPw ? <EyeOff size={15} /> : <Eye size={15} />}
               </button>
             </div>
+            {/* Password Strength */}
+            {form.password.length > 0 && (() => {
+              const checks = [
+                { label: '8+ characters', pass: form.password.length >= 8 },
+                { label: 'Uppercase letter', pass: /[A-Z]/.test(form.password) },
+                { label: 'Lowercase letter', pass: /[a-z]/.test(form.password) },
+                { label: 'Number', pass: /[0-9]/.test(form.password) },
+              ];
+              const passed = checks.filter((c) => c.pass).length;
+              const strength = passed <= 1 ? 'Weak' : passed <= 2 ? 'Fair' : passed <= 3 ? 'Good' : 'Strong';
+              const color = passed <= 1 ? 'var(--danger)' : passed <= 2 ? '#f59e0b' : passed <= 3 ? '#3b82f6' : 'var(--success)';
+              return (
+                <div style={{ marginTop: 8 }}>
+                  <div style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
+                    {[1, 2, 3, 4].map((i) => (
+                      <div key={i} style={{
+                        flex: 1, height: 3, borderRadius: 2,
+                        background: i <= passed ? color : 'var(--border)',
+                        transition: 'background 0.3s ease',
+                      }} />
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 11, color, fontWeight: 600, marginBottom: 4 }}>{strength}</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px 12px' }}>
+                    {checks.map((c) => (
+                      <span key={c.label} style={{ fontSize: 11, color: c.pass ? 'var(--success)' : 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 3 }}>
+                        {c.pass ? '✓' : '○'} {c.label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
 
           <button type="submit" className="btn btn-primary w-full" disabled={loading} style={{ marginTop: 4, height: 44 }}>
