@@ -5,34 +5,44 @@ export default function CustomCursor() {
   const cursorDotRef = useRef(null);
   const cursorOutlineRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const dotScaleRef = useRef(1);
+  const outlineScaleRef = useRef(1);
 
   useEffect(() => {
     const moveCursor = (e) => {
       const { clientX: x, clientY: y } = e;
-      
-      // Update dot position immediately
+
+      // Update dot position immediately (include current scale)
       if (cursorDotRef.current) {
-        cursorDotRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        cursorDotRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${dotScaleRef.current})`;
       }
 
-      // Update outline position with slight transition for "futuristic" feel
+      // Update outline position immediately (include current scale)
       if (cursorOutlineRef.current) {
-        cursorOutlineRef.current.animate({
-          transform: `translate3d(${x}px, ${y}px, 0)`
-        }, { duration: 500, fill: 'forwards' });
+        cursorOutlineRef.current.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${outlineScaleRef.current})`;
       }
-      
+
       if (!isVisible) setIsVisible(true);
     };
 
     const handleMouseDown = () => {
-      if (cursorOutlineRef.current) cursorOutlineRef.current.style.transform += ' scale(0.8)';
-      if (cursorDotRef.current) cursorDotRef.current.style.transform += ' scale(1.5)';
+      dotScaleRef.current = 1.5;
+      outlineScaleRef.current = 0.8;
+      if (cursorDotRef.current && cursorOutlineRef.current) {
+        // apply immediately so there's no lag
+        const rect = cursorDotRef.current.getBoundingClientRect();
+        cursorDotRef.current.style.transform = cursorDotRef.current.style.transform.replace(/scale\([^)]*\)/, '') + ` scale(${dotScaleRef.current})`;
+        cursorOutlineRef.current.style.transform = cursorOutlineRef.current.style.transform.replace(/scale\([^)]*\)/, '') + ` scale(${outlineScaleRef.current})`;
+      }
     };
 
     const handleMouseUp = () => {
-      if (cursorOutlineRef.current) cursorOutlineRef.current.style.transform = cursorOutlineRef.current.style.transform.replace(' scale(0.8)', '');
-      if (cursorDotRef.current) cursorDotRef.current.style.transform = cursorDotRef.current.style.transform.replace(' scale(1.5)', '');
+      dotScaleRef.current = 1;
+      outlineScaleRef.current = 1;
+      if (cursorDotRef.current && cursorOutlineRef.current) {
+        cursorDotRef.current.style.transform = cursorDotRef.current.style.transform.replace(/scale\([^)]*\)/, '') + ` scale(${dotScaleRef.current})`;
+        cursorOutlineRef.current.style.transform = cursorOutlineRef.current.style.transform.replace(/scale\([^)]*\)/, '') + ` scale(${outlineScaleRef.current})`;
+      }
     };
 
     const handleMouseLeave = () => setIsVisible(false);
