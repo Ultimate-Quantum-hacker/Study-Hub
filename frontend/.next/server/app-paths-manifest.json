@@ -1,0 +1,17 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/auth/callback/page": "app/auth/callback/page.js",
+  "/forgot-password/page": "app/forgot-password/page.js",
+  "/page": "app/page.js",
+  "/login/page": "app/login/page.js",
+  "/register/page": "app/register/page.js",
+  "/(app)/ai/page": "app/(app)/ai/page.js",
+  "/(app)/modules/page": "app/(app)/modules/page.js",
+  "/(app)/admin/page": "app/(app)/admin/page.js",
+  "/(app)/calls/page": "app/(app)/calls/page.js",
+  "/(app)/channels/[id]/page": "app/(app)/channels/[id]/page.js",
+  "/(app)/channels/page": "app/(app)/channels/page.js",
+  "/(app)/settings/page": "app/(app)/settings/page.js",
+  "/(app)/profile/page": "app/(app)/profile/page.js",
+  "/(app)/people/page": "app/(app)/people/page.js"
+}
